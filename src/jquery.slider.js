@@ -25,7 +25,7 @@
 			var op = this.options;
 			    this.options.elem = $(obj),
 				this.options.slider_lists = $('.slider-list', obj),
-				this.options.lists = op.slider_lists.find('li'),
+				this.options.lists = op.slider_lists.children(),
 				this.options.total = op.slider_lists.children().size(),
 				this.options.width = op.slider_lists.children().outerWidth(),
 				this.options.height = op.slider_lists.children().outerHeight();
@@ -174,7 +174,7 @@
 			var op = this.options;
 
 			op.next = parseInt(op.clicked, 10) * op.scroll; // new 
-			op.prev = $(op.paginationClass + ' li.'+ op.currentClass +' a', op.elem).index() * scroll;  // old
+			op.prev = $(op.pagination + ' li.'+ op.currentClass +' a', op.elem).index() * scroll;  // old
 			op.current = op.next;
 			var temp;
 			if(op.prev > op.next){
@@ -200,9 +200,9 @@
 				fn[ op.runFunc[op.effect] ](num,dir,easing);
 			}
 
-			if(op.paginationClass) {
-				$(op.paginationClass + ' li', op.elem).removeClass(op.currentClass);
-				$(op.paginationClass + ' li', op.elem).eq( Math.floor(num/op.scroll) ).addClass(op.currentClass);
+			if(op.pagination) {
+				$(op.pagination + ' li', op.elem).removeClass(op.currentClass);
+				$(op.pagination + ' li', op.elem).eq( Math.floor(num/op.scroll) ).addClass(op.currentClass);
 			}
 		},
 		aniNone:function(num){
@@ -267,9 +267,9 @@
 				};
 				fn.prevCtrl();
 			});
-			if(op.paginationClass) {
-				$(op.paginationClass + ' li:eq(' + op.start + ')', op.elem).addClass(op.current);
-				$(op.paginationClass + ' li a', op.elem).bind(op.paginationEvent,function() {
+			if(op.pagination) {
+				$(op.pagination + ' li:eq(' + op.start + ')', op.elem).addClass(op.current);
+				$(op.pagination + ' li', op.elem).bind(op.paginationEvent,function() {
 					if(op.play) {
 						fn.pause();
 					};
@@ -318,7 +318,7 @@
 		container: '.slides-container',
 		btnNext: null, // Next 按钮
 		btnPrev: null, // Next 按钮
-		paginationClass:null,  // page按钮
+		pagination:null,  // page按钮
 		current:'current', 
 		circular:false,
 		effect:'default', // none|| default|| fade || easing:easeOutExpo || easing:easeOutSine || ...
