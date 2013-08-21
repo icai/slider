@@ -1,0 +1,3 @@
+[submodule "asset/jquery.easing"]
+	path = asset/jquery.easing
+	url = https://github.com/gdsmith/jquery.easing.git
