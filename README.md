@@ -1,7 +1,7 @@
 slider - jQuery plugin
 =======
 
-slider (by icai)  is a  powerful slider show jquery plugin. write less,do more.
+`slider` is a  powerful slide show jquery plugin. just write less,do more.
 
 
 ### Default config: ###
