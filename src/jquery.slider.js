@@ -3,17 +3,24 @@
  * date：20130108 
  * author:caiguangsong
  *
- * last update:2013/04/02
+ * last update:2014/05/01
  *
  * ~2013/04/02 : reconstruct the code
+ * ~2014/05/01: support mouseWheel, optimize effect: none/fade implementation
  * 
  */
-;;(function($,undefined) {
+;;(function($,window,undefined) {
+	var comPrefix = window.comPrefix || 'youcompany';
+
+	var exports = this;
 	var instanceCount = 0;
+
 	$.slider = function(obj, optss) {
 		var opts = $.extend(true, {}, $.slider.defaults, optss);
+
 		$.fn.slider.instance.$count++;
 		$.fn.slider.instance['_$slicer'+ instanceCount++] = opts;
+
 		return new $.slider.fn.init(obj, opts);
 	}
 	$.slider.fn = $.slider.prototype = {
@@ -25,7 +32,7 @@
 			var op = this.options;
 			    this.options.elem = $(obj),
 				this.options.slider_lists = $('.slider-list', obj),
-				this.options.lists = op.slider_lists.children(),
+				this.options.lists = op.slider_lists.find('li'),
 				this.options.total = op.slider_lists.children().size(),
 				this.options.width = op.slider_lists.children().outerWidth(),
 				this.options.height = op.slider_lists.children().outerHeight();
@@ -45,10 +52,14 @@
 					'easing':'aniEasing'
 				},
 				this.options.clicked = 0;
+
 				this.options.animCss = op.vertical ? "top" : "left",
 				this.options.sizeCss = op.vertical ? "height" : "width";
+
 				this.options.getVal = op.vertical ? op.height : op.width; // 赋值
+
 				this._init();
+
 				//console.log(this);
 			return this;
 		},
@@ -89,7 +100,7 @@
 
 			return this;
 		},
-		vertical:function(){
+		vertical:function(){ // reconstruction
 			var fn = this;
 			var op = this.options;
 
@@ -100,14 +111,20 @@
 				height:op.vertical ? op.height * op.visible : op.height
 			});
 
-			var cirVal = op.circular ? 2 : 1;
-			op.slider_lists.css({ // slider 列表
-				position: 'absolute'
-			}).css(op.animCss,- op.getVal * op.start); //设定开始值
-			op.slider_lists.css(op.sizeCss,op.getVal * op.total * cirVal).children().css({
-				float:op.vertical ? "none" : "left"
-			})		
-
+			if(op.effect == 'none' || op.effect == 'fade'){
+                op.lists.css({
+                    display: "none",
+                    position: "absolute"
+                }).eq(op.start - 1 ).show();
+			}else if(/^(easing):([\w]+)/.test(op.effect) || op.effect === 'default'){
+				var cirVal = op.circular ? 2 : 1;
+				op.slider_lists.css({ // slider 列表
+					position: 'absolute'
+				}).css(op.animCss,- op.getVal * op.start); //设定开始值
+				op.slider_lists.css(op.sizeCss,op.getVal * op.total * cirVal).children().css({
+					float:op.vertical ? "none" : "left"
+				})
+			}
 			return this;
 		},
 		play:function(){
@@ -174,7 +191,7 @@
 			var op = this.options;
 
 			op.next = parseInt(op.clicked, 10) * op.scroll; // new 
-			op.prev = $(op.pagination + ' li.'+ op.currentClass +' a', op.elem).index() * scroll;  // old
+			op.prev = $(op.paginationClass + ' li.'+ op.currentClass +' a', op.elem).index() * scroll;  // old
 			op.current = op.next;
 			var temp;
 			if(op.prev > op.next){
@@ -200,29 +217,23 @@
 				fn[ op.runFunc[op.effect] ](num,dir,easing);
 			}
 
-			if(op.pagination) {
-				$(op.pagination + ' li', op.elem).removeClass(op.currentClass);
-				$(op.pagination + ' li', op.elem).eq( Math.floor(num/op.scroll) ).addClass(op.currentClass);
+			if(op.paginationClass) {
+				$(op.paginationClass + ' li', op.elem).removeClass(op.currentClass);
+				$(op.paginationClass + ' li', op.elem).eq( Math.floor(num/op.scroll) ).addClass(op.currentClass);
 			}
 		},
 		aniNone:function(num){
 			var fn = this;
 			var op = this.options;
-				op.slider_lists.css({
-					left:- op.width * num
-				})
+				op.lists.hide().eq(num).show();
 				op.callback(num);
 		},
 		aniFade:function(num){
-
 			var fn = this;
 			var op = this.options;
-
-			// { left:- width * num }
-			op.slider_lists.css(op.animCss, - op.getVal * num ).children(':eq(' + num + ')', op.elem).hide().fadeIn(op.fadeSpeed,function(){
+			op.lists.filter(':visible').fadeOut(op.fadeSpeed).end().eq(num).fadeIn(op.fadeSpeed,function(){
 				op.callback(num);
-
-			})
+			});
 		},
 		aniEasing:function (num,dir,easing,step){
 			var fn = this;
@@ -267,9 +278,9 @@
 				};
 				fn.prevCtrl();
 			});
-			if(op.pagination) {
-				$(op.pagination + ' li:eq(' + op.start + ')', op.elem).addClass(op.current);
-				$(op.pagination + ' li', op.elem).bind(op.paginationEvent,function() {
+			if(op.paginationClass) {
+				$(op.paginationClass + ' li:eq(' + op.start + ')', op.elem).addClass(op.current);
+				$(op.paginationClass + ' li a', op.elem).on(op.paginationEvent,function() {
 					if(op.play) {
 						fn.pause();
 					};
@@ -287,12 +298,26 @@
 				op.elem.data('interval', playInterval);
 			};
 			if(op.hoverPause && op.play) {
-				op.slider_lists.children().bind('mouseover', function() {
+				op.slider_lists.children().on('mouseover', function() {
 					fn.stop();
 				});
-				op.slider_lists.children().bind('mouseleave', function() {
+				op.slider_lists.children().on('mouseleave', function() {
 					fn.pause();
 				});
+			}
+			if(op.mouseWheel && $.fn.mousewheel){
+				$(op.container, op.elem).on('mousewheel',function(event){
+					event.preventDefault();
+					if(op.play) {
+						fn.pause();
+					};
+					if(event.deltaX  == 1 || event.deltaY == 1){
+						fn.nextCtrl();
+					}else if(event.deltaX  == -1 || event.deltaY == -1){
+						fn.prevCtrl();
+					}
+				})
+
 			}
 			return this;
 		}
@@ -308,7 +333,7 @@
 		return this;
 	};
 
-	$.fn.slider.version = "1.0";
+	$.fn.slider.version = "1.5.1";
 	$.fn.slider.instance = {
 		$count:0
 		
@@ -318,21 +343,34 @@
 		container: '.slides-container',
 		btnNext: null, // Next 按钮
 		btnPrev: null, // Next 按钮
-		pagination:null,  // page按钮
+		paginationClass:null,  // page按钮
 		current:'current', 
 		circular:false,
 		effect:'default', // none|| default|| fade || easing:easeOutExpo || easing:easeOutSine || ...
 		vertical:false, // horizontal 默认横向
 		visible: 1, // 显示多少个
 		scroll:1, //  切换个数（针对） haspagination ==  false && hasNextPrev == true
-		fadeSpeed: 350, // 淡入速度
+		fadeSpeed: 500, // 淡入速度
 		slideSpeed: 350,  // 切换速度
 		play: 0,  // 间隔时间
 		pause: 0, //暂停时间
-		hoverPause: false, // 划过是否停止
-		paginationEvent:'click', // 由哪一个开始：待定参数
-		start: 1, // 由哪一个开始：待定参数
+
+		hoverPause: true, // 划过是否停止
+
+		// hasNextPrev: false, // 左右键(考虑取消：：转为 null 判断)
+		// haspagination:true, // 导航键（考虑取消：：转为 null 判断）
+		mouseWheel: false, // 鼠标滚动：：待定参数
+
+		paginationEvent:'click', // 
+		start: 1, // 由哪一个开始
+		
+		// preload: false, // 不可用，建议写在Css上，.xxx img { background:url(.../loading.gif)}
+		// preloadImage: '/img/loading.gif', // 不可用		
+		// autoHeight: false, // ：待定参数
+		// autoHeightSpeed: 350, // ：待定参数
+		before: function() {},
+		
 		callback: function() {}
 	};
 
-})(jQuery);
+})(jQuery,window);

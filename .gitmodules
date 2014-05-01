@@ -1,3 +1,6 @@
 [submodule "asset/jquery.easing"]
 	path = asset/jquery.easing
 	url = https://github.com/gdsmith/jquery.easing.git
+[submodule "asset/jquery-mousewheel"]
+	path = asset/jquery-mousewheel
+	url = https://github.com/brandonaaron/jquery-mousewheel.git

@@ -3,6 +3,12 @@ slider - jQuery plugin
 
 `slider` is a  powerful slide show jquery plugin. just write less,do more.
 
+ current version:**1.5.1**
+
+###Changelog:
+ * ~2013/04/02 : reconstruct the code.
+ * ~2013/01/08 : initialization
+ * ~2014/05/01:support mouseWheel, optimize effect: none/fade implementation
 
 ### Default config: ###
 <table class="classtable" cellspacing="0">
@@ -36,7 +42,7 @@ slider - jQuery plugin
 	        </td>                    
 	      </tr>
 	      <tr>
-	        <td class="code">pagination</td>
+	        <td class="code">paginationClass</td>
 	        <td class="code">null</td>
 	        <td class="code">String</td>        
 	        <td>pagination parent Class</td>                    
@@ -84,7 +90,7 @@ slider - jQuery plugin
 	      </tr>
 	      <tr>
 	        <td class="code">fadeSpeed</td>
-	        <td class="code">350</td>
+	        <td class="code">500</td>
 	        <td class="code">Number</td>        
 	        <td>淡入淡出速度</td>                            
 	      </tr>      
@@ -123,6 +129,12 @@ slider - jQuery plugin
 	        <td class="code">1</td>
 	        <td class="code">Number</td>        
 	        <td>初始化状态，默认第一个开始，静态样式应该同步，否则可能会出错</td>                    
+	      </tr>
+	      <tr>
+	        <td class="code">mouseWheel</td>
+	        <td class="code">false</td>
+	        <td class="code">Boolean</td>        
+	        <td>鼠标滚动事件</td>                    
 	      </tr>        
 	    </tbody>
 	 </table>
@@ -154,7 +166,8 @@ slider - jQuery plugin
 
 ###Demo:###
 
-{% include dir:examples  %}
+[https://icai.github.io/Jclibrary/ui/slider/demo.html](https://icai.github.io/Jclibrary/ui/slider/demo.html "slider demo")
+
 
 
 ###Author:###
@@ -165,9 +178,29 @@ blog:`hi.baidu.com/tp100`
 github: `github.com/icai`
 
 
-###license:###
+###License:###
 
-{% include LICENSE %}
+The MIT License (MIT)
+
+Copyright (c) 2014 icai
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 
 
