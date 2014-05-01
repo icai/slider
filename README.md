@@ -6,8 +6,8 @@ slider - jQuery plugin
  current version:**1.5.1**
 
 ###Changelog:
- * ~2013/04/02 : reconstruct the code.
  * ~2013/01/08 : initialization
+ * ~2013/04/02 : reconstruct the code.
  * ~2014/05/01:support mouseWheel, optimize effect: none/fade implementation
 
 ### Default config: ###
